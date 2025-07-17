@@ -1,61 +1,49 @@
-body {
-  font-family: Arial, sans-serif;
-  background: #f4f4f4;
-  padding: 20px;
-}
+document.getElementById('loan-form').addEventListener('submit', function (e) {
+  e.preventDefault();
 
-.container {
-  background: #fff;
-  max-width: 600px;
-  margin: auto;
-  padding: 30px;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.1);
-}
+  const amount = parseFloat(document.getElementById('amount').value);
+  const interest = parseFloat(document.getElementById('interest').value) / 100 / 12;
+  const years = parseInt(document.getElementById('years').value);
+  const payments = years * 12;
 
-h1, h2 {
-  text-align: center;
-  color: #333;
-}
+  const x = Math.pow(1 + interest, payments);
+  const monthly = (amount * x * interest) / (x - 1);
 
-form label {
-  display: block;
-  margin-top: 15px;
-}
+  if (!isNaN(monthly)) {
+    const totalPayment = monthly * payments;
+    const totalInterest = totalPayment - amount;
 
-form input {
-  width: 100%;
-  padding: 10px;
-  margin-top: 5px;
-  box-sizing: border-box;
-}
+    document.getElementById('monthly-payment').textContent = monthly.toFixed(2);
+    document.getElementById('total-payment').textContent = totalPayment.toFixed(2);
+    document.getElementById('total-interest').textContent = totalInterest.toFixed(2);
 
-form button {
-  margin-top: 20px;
-  width: 100%;
-  padding: 10px;
-  background: #007bff;
-  color: white;
-  border: none;
-  cursor: pointer;
-}
+    document.getElementById('results').classList.remove('hidden');
 
-form button:hover {
-  background: #0056b3;
-}
+    generateAmortizationSchedule(amount, interest, payments, monthly);
+  } else {
+    alert("Please enter valid numbers in all fields.");
+  }
+});
 
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 20px;
-}
+function generateAmortizationSchedule(principal, monthlyInterest, payments, monthlyPayment) {
+  const tableBody = document.getElementById('amortization-body');
+  tableBody.innerHTML = "";
+  let balance = principal;
 
-th, td {
-  padding: 8px;
-  border: 1px solid #ddd;
-  text-align: center;
-}
+  for (let i = 1; i <= payments; i++) {
+    const interestPayment = balance * monthlyInterest;
+    const principalPayment = monthlyPayment - interestPayment;
+    balance -= principalPayment;
 
-.hidden {
-  display: none;
+    tableBody.innerHTML += `
+      <tr>
+        <td>${i}</td>
+        <td>${principalPayment.toFixed(2)}</td>
+        <td>${interestPayment.toFixed(2)}</td>
+        <td>${balance > 0 ? balance.toFixed(2) : '0.00'}</td>
+      </tr>
+    `;
+  }
+
+  document.getElementById('amortization').classList.remove('hidden');
 }

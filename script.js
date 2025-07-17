@@ -1,46 +1,108 @@
-document.getElementById('loan-form').addEventListener('submit', function(e) {
-  e.preventDefault();
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
 
-  const amount = parseFloat(document.getElementById('amount').value);
-  const interest = parseFloat(document.getElementById('interest').value) / 100 / 12;
-  const years = parseInt(document.getElementById('years').value);
-  const payments = years * 12;
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background: linear-gradient(to right, #f8fbff, #e0f7ff);
+  color: #333;
+  padding: 40px 20px;
+}
 
-  const x = Math.pow(1 + interest, payments);
-  const monthly = (amount * x * interest) / (x - 1);
+.container {
+  max-width: 700px;
+  margin: auto;
+  background: #ffffff;
+  padding: 30px 40px;
+  border-radius: 15px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
 
-  if (!isNaN(monthly)) {
-    const totalPayment = monthly * payments;
-    const totalInterest = totalPayment - amount;
+h1, h2 {
+  text-align: center;
+  color: #1d3557;
+  margin-bottom: 20px;
+}
 
-    document.getElementById('monthly-payment').textContent = monthly.toFixed(2);
-    document.getElementById('total-payment').textContent = totalPayment.toFixed(2);
-    document.getElementById('total-interest').textContent = totalInterest.toFixed(2);
+.form-group {
+  margin-bottom: 20px;
+}
 
-    document.getElementById('results').classList.remove('hidden');
-    generateAmortizationSchedule(amount, interest, payments, monthly);
-  }
-});
+label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #1d3557;
+}
 
-function generateAmortizationSchedule(principal, monthlyInterest, payments, monthlyPayment) {
-  const table = document.getElementById('amortization-body');
-  table.innerHTML = "";
-  let balance = principal;
+input[type="number"] {
+  width: 100%;
+  padding: 10px;
+  border: 2px solid #a8dadc;
+  border-radius: 8px;
+  font-size: 1em;
+  background-color: #f1faee;
+}
 
-  for (let i = 1; i <= payments; i++) {
-    const interest = balance * monthlyInterest;
-    const principalPaid = monthlyPayment - interest;
-    balance -= principalPaid;
+input[type="number"]:focus {
+  outline: none;
+  border-color: #457b9d;
+  background-color: #e0f7ff;
+}
 
-    table.innerHTML += `
-      <tr>
-        <td>${i}</td>
-        <td>${principalPaid.toFixed(2)}</td>
-        <td>${interest.toFixed(2)}</td>
-        <td>${balance > 0 ? balance.toFixed(2) : 0}</td>
-      </tr>
-    `;
-  }
+.btn {
+  background-color: #1d3557;
+  color: white;
+  padding: 12px;
+  font-size: 1.1em;
+  border: none;
+  border-radius: 8px;
+  width: 100%;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
 
-  document.getElementById('amortization').classList.remove('hidden');
+.btn:hover {
+  background-color: #457b9d;
+}
+
+.results {
+  margin-top: 30px;
+  background-color: #f1faee;
+  padding: 20px;
+  border-radius: 10px;
+  border-left: 5px solid #1d3557;
+}
+
+.results p {
+  font-size: 1.1em;
+  margin: 10px 0;
+}
+
+.table-container {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  background-color: #f9f9f9;
+}
+
+table th, table td {
+  padding: 10px;
+  border: 1px solid #ddd;
+  text-align: center;
+}
+
+table th {
+  background-color: #a8dadc;
+  color: #1d3557;
+}
+
+.hidden {
+  display: none;
 }
